@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a809958a8dabc9242ba2524050eb3204, type: 3}
-  m_Name: ChestData1
+  m_Name: BasicChestData4
   m_EditorClassIdentifier: 
-  chestName: Silver Chest
-  unlockTime: 200
+  chestName: Basic Chest
+  unlockTime: 20
   rewards:
-  - Wizard
-  - PEKKA
+  - Goblin
+  - Barbarian

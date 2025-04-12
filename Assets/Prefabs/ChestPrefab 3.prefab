@@ -149,8 +149,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chestData: {fileID: 11400000, guid: 0dc8e9fc7221bae4f9cb993c96170573, type: 2}
   state: 1
-  unlockTimer: 100
-  currentTimeLeft: 100
+  unlockTimer: 300
+  currentTimeLeft: 300
   timerText: {fileID: 7513434942917033231}
 --- !u!1 &7289299623420410643
 GameObject:

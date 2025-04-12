@@ -16,7 +16,7 @@ public class ChestSlot : MonoBehaviour
     public bool HasChest => state != ChestState.Empty;
 
     [Header("UI References")]
-    public TextMeshProUGUI timerText; // ⏱ Text UI to show time left
+    public TextMeshProUGUI timerText;
 
     private void Update()
     {
@@ -136,7 +136,7 @@ public class ChestSlot : MonoBehaviour
             timerText.gameObject.SetActive(false);
     }
 
-    public int GetGemCost() => Mathf.CeilToInt(currentTimeLeft / 600f); // 600s = 10 mins
+    public int GetGemCost() => Mathf.CeilToInt(currentTimeLeft / 2f);
 
     private string FormatTime(float timeInSeconds)
     {
