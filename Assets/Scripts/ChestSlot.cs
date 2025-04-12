@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using System.Linq;
 using System;
 
 public enum ChestState { Empty, Locked, Unlocking, ReadyToCollect }
@@ -13,13 +15,39 @@ public class ChestSlot : MonoBehaviour
     public float currentTimeLeft;
     public bool HasChest => state != ChestState.Empty;
 
+    [Header("UI References")]
+    public TextMeshProUGUI timerText;
+
     private void Update()
     {
         if (state == ChestState.Unlocking)
         {
             currentTimeLeft -= Time.deltaTime;
+
+            // Update the timer text while unlocking
+            if (timerText != null)
+            {
+                timerText.gameObject.SetActive(true);
+                timerText.text = FormatTime(currentTimeLeft);
+            }
+
             if (currentTimeLeft <= 0f)
+            {
                 SetToCollectable();
+            }
+        }
+        else if (state == ChestState.ReadyToCollect)
+        {
+            if (timerText != null)
+            {
+                timerText.text = "Tap to Collect";
+                timerText.gameObject.SetActive(true);
+            }
+        }
+        else
+        {
+            if (timerText != null)
+                timerText.gameObject.SetActive(false);
         }
     }
 
@@ -46,12 +74,24 @@ public class ChestSlot : MonoBehaviour
     public void UnlockWithGems()
     {
         state = ChestState.ReadyToCollect;
+        currentTimeLeft = 0f;
+
+        if (timerText != null)
+        {
+            timerText.text = "Tap to Collect";
+            timerText.gameObject.SetActive(true);
+        }
     }
 
     public void CollectChest()
     {
+        if (state != ChestState.ReadyToCollect) return;
+
         state = ChestState.Empty;
         chestData = null;
+        if (timerText != null)
+            timerText.gameObject.SetActive(false);
+
         foreach (Transform child in transform)
             Destroy(child.gameObject);
     }
@@ -60,6 +100,12 @@ public class ChestSlot : MonoBehaviour
     {
         chestData = previousData;
         state = ChestState.ReadyToCollect;
+
+        if (timerText != null)
+        {
+            timerText.text = "Tap to Collect";
+            timerText.gameObject.SetActive(true);
+        }
     }
 
     public void SetChest(ChestSlot chestPrefabSlot)
@@ -67,16 +113,35 @@ public class ChestSlot : MonoBehaviour
         this.chestData = chestPrefabSlot.chestData;
         this.unlockTimer = chestData.unlockTime;
         this.state = ChestState.Locked;
+        if (timerText != null)
+            timerText.gameObject.SetActive(false);
     }
 
-    public void SetToCollectable() => state = ChestState.ReadyToCollect;
+    public void SetToCollectable()
+    {
+        state = ChestState.ReadyToCollect;
+        currentTimeLeft = 0f;
+        if (timerText != null)
+        {
+            timerText.text = "Tap to Collect";
+            timerText.gameObject.SetActive(true);
+        }
+    }
 
     public void ResetToLocked()
     {
         state = ChestState.Locked;
         currentTimeLeft = unlockTimer;
+        if (timerText != null)
+            timerText.gameObject.SetActive(false);
     }
 
-    public int GetGemCost() => Mathf.CeilToInt(currentTimeLeft / 600f); // 600s = 10 mins
-}
+    public int GetGemCost() => Mathf.CeilToInt(currentTimeLeft / 2f);
 
+    private string FormatTime(float timeInSeconds)
+    {
+        timeInSeconds = Mathf.Max(timeInSeconds, 0f);
+        TimeSpan time = TimeSpan.FromSeconds(timeInSeconds);
+        return $"{time.Hours:D2}:{time.Minutes:D2}:{time.Seconds:D2}";
+    }
+}
